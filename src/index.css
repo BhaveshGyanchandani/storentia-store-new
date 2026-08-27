@@ -2,7 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background-color: #faf9f7;
-  color: #111114;
+@layer base {
+  :root {
+    /* Warm ivory foundation, near-black ink, single clay/terracotta accent */
+    --background: 36 33% 96%;
+    --foreground: 30 10% 10%;
+    --ink: 30 10% 10%;
+    --ink-soft: 30 8% 32%;
+    --cream: 36 33% 96%;
+    --cream-dim: 34 24% 92%;
+    --card: 36 30% 98%;
+    --border: 30 12% 86%;
+    --input: 30 12% 86%;
+    --ring: 17 55% 42%;
+    --muted: 34 20% 91%;
+    --muted-foreground: 30 8% 40%;
+    --accent: 17 55% 42%;
+    --accent-foreground: 36 33% 97%;
+    --primary: 30 10% 10%;
+    --primary-foreground: 36 33% 97%;
+    --destructive: 6 60% 45%;
+    --destructive-foreground: 36 33% 97%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-ink font-sans antialiased;
+    font-feature-settings: "ss01" 1, "cv01" 1;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display;
+  }
+
+  ::selection {
+    background: hsl(var(--accent) / 0.18);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .container-px {
+    @apply px-6 md:px-10 lg:px-14;
+  }
+
+  .eyebrow {
+    @apply text-[11px] uppercase tracking-widest2 text-ink-soft/80 font-medium;
+  }
+
+  .hairline {
+    @apply border-t border-border;
+  }
+
+  .focus-ring {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

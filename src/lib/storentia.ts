@@ -16,7 +16,7 @@ import { Product, ProductListResponse } from '../types/storentia';
 // CORS; in production it hits the real URL directly (you'll need a real
 // backend proxy for that later — see README).
 const BASE_URL = import.meta.env.DEV
-  ? '/storentia-api/graphql'
+  ? '/storentia-api/storefront/graphql'
   : (import.meta.env.VITE_STORENTIA_API_URL as string);
 
 const storeId = import.meta.env.VITE_STORENTIA_STORE_ID as string;
