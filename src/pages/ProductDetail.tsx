@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
 import { Heart, Minus, Plus, RefreshCw, Ruler, ShieldCheck, Truck } from "lucide-react";
 import { getProductById, getRelatedProducts, getReviewsForProduct } from "@/data/products";
@@ -22,11 +23,23 @@ export default function ProductDetail() {
   const [color, setColor] = useState(product?.colors[0]?.name);
   const [quantity, setQuantity] = useState(1);
   const [sizeError, setSizeError] = useState(false);
+  const [showStickyBar, setShowStickyBar] = useState(false);
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   const addItem = useCartStore((s) => s.addItem);
   const openCart = useCartStore((s) => s.open);
   const wished = useWishlistStore((s) => (product ? s.has(product.id) : false));
   const toggleWish = useWishlistStore((s) => s.toggle);
+
+  useEffect(() => {
+    const el = ctaRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => setShowStickyBar(!entry.isIntersecting), {
+      rootMargin: "-96px 0px 0px 0px",
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [product?.id]);
 
   if (!product) {
     return (
@@ -47,7 +60,7 @@ export default function ProductDetail() {
     }
     addItem(product.id, { size, color, quantity });
     openCart();
-    toast.success(`Added ${product.name} to bag`);
+    toast.success(`Added ${product.productTitle} to bag`);
   };
 
   const handleBuyNow = () => {
@@ -63,18 +76,18 @@ export default function ProductDetail() {
     <div className="pt-28">
       <div className="container-px">
         <div className="grid gap-10 md:grid-cols-2 md:gap-14">
-          <ImageGallery images={product.images} alt={product.name} />
+          <ImageGallery images={product.productImages} alt={product.productTitle} />
 
           <div className="max-w-lg">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">{product.brand}</p>
-            <h1 className="mt-2 font-display text-3xl md:text-4xl leading-tight">{product.name}</h1>
+            <h1 className="mt-2 font-display text-3xl md:text-4xl leading-tight">{product.productTitle}</h1>
 
             <div className="mt-3 flex items-center gap-3">
               <Rating value={product.rating} count={product.reviewCount} size="md" />
             </div>
 
             <div className="mt-5 flex items-center gap-3">
-              <span className="text-2xl font-medium">{formatPrice(product.price)}</span>
+              <span className="text-2xl font-medium">{formatPrice(product.sellingPrice)}</span>
               {product.originalPrice && (
                 <>
                   <span className="text-base text-muted-foreground line-through">{formatPrice(product.originalPrice)}</span>
@@ -83,7 +96,7 @@ export default function ProductDetail() {
               )}
             </div>
 
-            <p className="mt-6 text-sm leading-relaxed text-ink-soft">{product.description}</p>
+            <p className="mt-6 text-sm leading-relaxed text-ink-soft">{product.productDescription}</p>
 
             {/* Color selector */}
             <div className="mt-8">
@@ -149,7 +162,7 @@ export default function ProductDetail() {
             </div>
 
             {/* CTAs */}
-            <div className="mt-8 flex gap-3">
+            <div ref={ctaRef} className="mt-8 flex gap-3">
               <Button size="lg" className="flex-1" onClick={handleAddToCart} disabled={product.availability === "out-of-stock"}>
                 {product.availability === "out-of-stock" ? "Out of Stock" : "Add to Bag"}
               </Button>
@@ -225,6 +238,40 @@ export default function ProductDetail() {
       </div>
 
       <RelatedProducts products={related} />
+
+      <AnimatePresence>
+        {showStickyBar && (
+          <motion.div
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 80, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="glass-surface fixed inset-x-0 bottom-0 z-30 shadow-lift"
+          >
+            <div className="container-px flex items-center justify-between gap-4 py-3.5">
+              <div className="flex items-center gap-3 min-w-0">
+                <img
+                  src={product.productImages[0]}
+                  alt=""
+                  className="hidden h-11 w-9 shrink-0 rounded-xs object-cover sm:block"
+                />
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium">{product.productTitle}</p>
+                  <p className="text-sm text-ink-soft">{formatPrice(product.sellingPrice)}</p>
+                </div>
+              </div>
+              <Button
+                size="md"
+                onClick={handleAddToCart}
+                disabled={product.availability === "out-of-stock"}
+                className="shrink-0"
+              >
+                {product.availability === "out-of-stock" ? "Out of Stock" : "Add to Bag"}
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { CATEGORIES, PRODUCTS } from "@/data/products";
+import { JOURNAL_ARTICLES } from "@/data/journal";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Button } from "@/components/ui/button";
+import { handleImageError } from "@/lib/images";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 22 },
@@ -32,20 +34,28 @@ function Reveal({ children, className }: { children: React.ReactNode; className?
 export default function Home() {
   const trending = PRODUCTS.filter((p) => p.isFeatured).slice(0, 8);
   const newArrivals = PRODUCTS.filter((p) => p.isNew).slice(0, 4);
+  const featuredArticle = JOURNAL_ARTICLES.find((a) => a.featured) ?? JOURNAL_ARTICLES[0];
 
   return (
     <div>
       {/* HERO */}
       <section className="relative min-h-[92vh] overflow-hidden bg-ink">
         <img
-          src="https://picsum.photos/seed/hero-editorial/1800/1400"
+          src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1800&auto=format&fit=crop&q=80"
           alt="Editorial campaign imagery"
+          onError={handleImageError}
           className="absolute inset-0 h-full w-full object-cover opacity-80"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-ink/10" />
 
         <div className="relative container-px flex min-h-[92vh] flex-col justify-end pb-20 pt-40">
-          <motion.p custom={0} initial="hidden" animate="show" variants={fadeUp} className="eyebrow text-cream/70">
+          <motion.p
+            custom={0}
+            initial="hidden"
+            animate="show"
+            variants={fadeUp}
+            className="eyebrow inline-block bg-gradient-to-r from-rose-300 via-amber-200 to-rose-300 bg-clip-text text-transparent font-bold tracking-widest drop-shadow-[0_1px_3px_rgba(244,63,94,0.3)]"
+          >
             Autumn Collection — 2026
           </motion.p>
           <motion.h1
@@ -125,29 +135,29 @@ export default function Home() {
       <section className="container-px py-28">
         <div className="grid gap-6 md:grid-cols-2 md:gap-10 items-center">
           <Reveal>
-            <div className="relative aspect-[4/5] overflow-hidden rounded-sm">
-              <img src="https://picsum.photos/seed/editorial-main/1200/1500" alt="Editorial feature" className="h-full w-full object-cover" />
-            </div>
+            <Link to={`/journal/${featuredArticle.slug}`} className="group relative block aspect-[4/5] overflow-hidden rounded-sm">
+              <img
+                src={featuredArticle.heroImage}
+                alt=""
+                className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+            </Link>
           </Reveal>
           <Reveal className="md:pl-6">
-            <p className="eyebrow mb-4">The Journal — Issue 14</p>
+            <p className="eyebrow mb-4">The Journal — {featuredArticle.category}</p>
             <h2 className="font-display text-3xl md:text-4xl leading-tight">
-              Materials that get better with time, not worse.
+              {featuredArticle.title}
             </h2>
-            <p className="mt-5 max-w-md text-sm text-ink-soft md:text-base">
-              We work with a small group of mills and workshops chosen for how their materials age — vegetable-tanned
-              leathers that darken with use, wools that pill less with every wash, denim that fades exactly where you
-              live in it.
-            </p>
+            <p className="mt-5 max-w-md text-sm text-ink-soft md:text-base">{featuredArticle.deck}</p>
             <Button variant="outline" className="mt-8" asChild>
-              <Link to="/journal">Read the Story</Link>
+              <Link to={`/journal/${featuredArticle.slug}`}>Read the Story</Link>
             </Button>
             <div className="mt-10 grid grid-cols-2 gap-4 max-w-sm">
               <div className="aspect-square overflow-hidden rounded-sm">
-                <img src="https://picsum.photos/seed/editorial-detail-1/500/500" alt="" className="h-full w-full object-cover" />
+                <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&auto=format&fit=crop&q=80" alt="" onError={handleImageError} className="h-full w-full object-cover" />
               </div>
               <div className="aspect-square overflow-hidden rounded-sm mt-8">
-                <img src="https://picsum.photos/seed/editorial-detail-2/500/500" alt="" className="h-full w-full object-cover" />
+                <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800&auto=format&fit=crop&q=80" alt="" onError={handleImageError} className="h-full w-full object-cover" />
               </div>
             </div>
           </Reveal>
@@ -190,7 +200,7 @@ export default function Home() {
                 </Button>
               </div>
               <div className="aspect-[4/3] md:aspect-auto md:h-full">
-                <img src="https://picsum.photos/seed/promo-capsule/1000/900" alt="" className="h-full w-full object-cover" />
+                <img src="https://images.unsplash.com/photo-1548883354-7622d03aca27?w=1000&auto=format&fit=crop&q=80" alt="" onError={handleImageError} className="h-full w-full object-cover" />
               </div>
             </div>
           </div>

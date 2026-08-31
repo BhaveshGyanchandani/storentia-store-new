@@ -17,22 +17,6 @@ export function About() {
   );
 }
 
-export function Journal() {
-  return (
-    <StaticPage eyebrow="Journal" title="Notes from the studio">
-      <p>
-        Our journal covers the material choices, workshops and small details behind each collection — from the mill
-        that weaves our cashmere to the reason we chain-stitch every denim hem.
-      </p>
-      <h2>Issue 14 — Materials that age well</h2>
-      <p>
-        This season we look at vegetable-tanned leather, and why a bag that looks better in year three is worth more
-        than one built to look best on day one.
-      </p>
-    </StaticPage>
-  );
-}
-
 export function Careers() {
   return (
     <StaticPage eyebrow="Company" title="Careers at Maison">

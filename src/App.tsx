@@ -11,9 +11,11 @@ import Checkout from "@/pages/Checkout";
 import OrderSuccess from "@/pages/OrderSuccess";
 import Account from "@/pages/Account";
 import NotFound from "@/pages/NotFound";
+import JournalIndex from "@/pages/JournalIndex";
+import JournalArticle from "@/pages/JournalArticle";
+import TheEdit from "@/pages/TheEdit";
 import {
   About,
-  Journal,
   Careers,
   Sustainability,
   Contact,
@@ -40,7 +42,9 @@ export default function App() {
             <Route path="/account" element={<Account />} />
             <Route path="/account/orders" element={<Account />} />
             <Route path="/about" element={<About />} />
-            <Route path="/journal" element={<Journal />} />
+            <Route path="/journal" element={<JournalIndex />} />
+            <Route path="/journal/:slug" element={<JournalArticle />} />
+            <Route path="/the-edit" element={<TheEdit />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/sustainability" element={<Sustainability />} />
             <Route path="/contact" element={<Contact />} />

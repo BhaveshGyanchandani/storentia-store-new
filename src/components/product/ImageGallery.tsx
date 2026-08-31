@@ -1,15 +1,27 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { handleImageError } from "@/lib/images";
 
 export function ImageGallery({ images, alt }: { images: string[]; alt: string }) {
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [zoomed, setZoomed] = useState(false);
+  const [origin, setOrigin] = useState("50% 50%");
+  const frameRef = useRef<HTMLDivElement>(null);
 
   const go = (next: number) => {
     setDirection(next > active ? 1 : -1);
     setActive((next + images.length) % images.length);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = frameRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setOrigin(`${x}% ${y}%`);
   };
 
   return (
@@ -24,23 +36,34 @@ export function ImageGallery({ images, alt }: { images: string[]; alt: string })
               active === i ? "border-ink" : "border-border hover:border-ink/40"
             )}
           >
-            <img src={img} alt="" className="h-full w-full object-cover" />
+            <img src={img} alt="" onError={handleImageError} className="h-full w-full object-cover" />
           </button>
         ))}
       </div>
 
-      <div className="relative flex-1 aspect-[4/5] overflow-hidden rounded-sm bg-muted">
+      <div
+        ref={frameRef}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setZoomed(true)}
+        onMouseLeave={() => setZoomed(false)}
+        className="relative flex-1 aspect-[4/5] overflow-hidden rounded-sm bg-muted cursor-zoom-in"
+      >
         <AnimatePresence initial={false} custom={direction} mode="wait">
           <motion.img
             key={active}
             src={images[active]}
             alt={alt}
+            onError={handleImageError}
             custom={direction}
             initial={{ opacity: 0, x: direction * 24 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -direction * 24 }}
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute inset-0 h-full w-full object-cover"
+            style={{ transformOrigin: origin }}
+            className={cn(
+              "absolute inset-0 h-full w-full object-cover transition-transform duration-300 ease-out",
+              zoomed && "scale-[1.6]"
+            )}
           />
         </AnimatePresence>
 

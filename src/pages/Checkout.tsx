@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { handleImageError } from "@/lib/images";
 
 const STEPS = ["Contact", "Shipping", "Payment"] as const;
 
@@ -79,11 +80,11 @@ export default function Checkout() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <Label>Full Name</Label>
-                  <Input placeholder="Aanya Kapoor" defaultValue="Aanya Kapoor" />
+                  <Input placeholder="Bhavesh Gyanchandani" defaultValue="Bhavesh Gyanchandani" />
                 </div>
                 <div>
                   <Label>Email</Label>
-                  <Input type="email" placeholder="you@email.com" defaultValue="aanya.kapoor@email.com" />
+                  <Input type="email" placeholder="you@email.com" defaultValue="bhaveshgyanchandanip1@gmail.com" />
                 </div>
                 <div>
                   <Label>Phone</Label>
@@ -194,16 +195,16 @@ export default function Checkout() {
               {items.map(({ line, product }) => (
                 <div key={`${line.productId}-${line.size}-${line.color}`} className="flex gap-3">
                   <div className="relative h-16 w-14 shrink-0 overflow-hidden rounded-xs bg-muted">
-                    <img src={product!.images[0]} alt="" className="h-full w-full object-cover" />
+                    <img src={product!.productImages[0]} alt="" onError={handleImageError} className="h-full w-full object-cover" />
                     <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-ink text-[10px] text-cream">
                       {line.quantity}
                     </span>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm">{product!.name}</p>
+                    <p className="truncate text-sm">{product!.productTitle}</p>
                     <p className="text-xs text-muted-foreground">{[line.color, line.size].filter(Boolean).join(" · ")}</p>
                   </div>
-                  <span className="text-sm">{formatPrice(product!.price * line.quantity)}</span>
+                  <span className="text-sm">{formatPrice(product!.sellingPrice * line.quantity)}</span>
                 </div>
               ))}
             </div>

@@ -35,7 +35,7 @@ export function SheetContent({
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-ink/40 backdrop-blur-[2px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
       <DialogPrimitive.Content
-        className={cn("fixed z-50 bg-cream shadow-lift flex flex-col outline-none", sideClasses[side], className)}
+        className={cn("fixed z-50 glass-surface shadow-lift flex flex-col outline-none", sideClasses[side], className)}
         {...props}
       >
         {!hideHeader && (

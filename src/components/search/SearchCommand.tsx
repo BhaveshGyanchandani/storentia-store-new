@@ -5,6 +5,7 @@ import { Search, TrendingUp, Clock, ArrowUpRight } from "lucide-react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { PRODUCTS, TRENDING_SEARCHES } from "@/data/products";
 import { formatPrice, cn } from "@/lib/utils";
+import { handleImageError } from "@/lib/images";
 
 const RECENT_KEY = "maison-recent-searches";
 
@@ -38,7 +39,7 @@ export function SearchCommand({ open, onOpenChange }: { open: boolean; onOpenCha
   const results = useMemo(() => {
     if (!query.trim()) return [];
     const q = query.toLowerCase();
-    return PRODUCTS.filter((p) => p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.category.includes(q)).slice(0, 6);
+    return PRODUCTS.filter((p) => p.productTitle.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.category.includes(q)).slice(0, 6);
   }, [query]);
 
   const goToProduct = (id: string, term: string) => {
@@ -63,7 +64,7 @@ export function SearchCommand({ open, onOpenChange }: { open: boolean; onOpenCha
       setActiveIndex((i) => Math.max(i - 1, 0));
     } else if (e.key === "Enter") {
       const chosen = results[activeIndex];
-      if (chosen) goToProduct(chosen.id, chosen.name);
+      if (chosen) goToProduct(chosen.id, chosen.productTitle);
       else if (query.trim()) runSearch(query.trim());
     }
   };
@@ -72,7 +73,7 @@ export function SearchCommand({ open, onOpenChange }: { open: boolean; onOpenCha
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-ink/45 backdrop-blur-[2px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
-        <DialogPrimitive.Content className="fixed left-1/2 top-[12%] z-50 w-[92vw] max-w-xl -translate-x-1/2 rounded-md bg-cream shadow-lift outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
+        <DialogPrimitive.Content className="fixed left-1/2 top-[12%] z-50 w-[92vw] max-w-xl -translate-x-1/2 rounded-md glass-panel outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
           <DialogPrimitive.Title className="sr-only">Search</DialogPrimitive.Title>
           <div className="flex items-center gap-3 px-5 py-4 hairline">
             <Search className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -126,18 +127,18 @@ export function SearchCommand({ open, onOpenChange }: { open: boolean; onOpenCha
               <button
                 key={product.id}
                 onMouseEnter={() => setActiveIndex(i)}
-                onClick={() => goToProduct(product.id, product.name)}
+                onClick={() => goToProduct(product.id, product.productTitle)}
                 className={cn(
                   "flex w-full items-center gap-3 rounded-sm p-2.5 text-left transition-colors",
                   activeIndex === i ? "bg-muted" : "hover:bg-muted/60"
                 )}
               >
-                <img src={product.images[0]} alt="" className="h-12 w-10 rounded-xs object-cover" />
+                <img src={product.productImages[0]} alt="" onError={handleImageError} className="h-12 w-10 rounded-xs object-cover" />
                 <div className="min-w-0 flex-1">
                   <p className="text-[11px] uppercase text-muted-foreground">{product.brand}</p>
-                  <p className="truncate text-sm">{product.name}</p>
+                  <p className="truncate text-sm">{product.productTitle}</p>
                 </div>
-                <span className="text-sm font-medium">{formatPrice(product.price)}</span>
+                <span className="text-sm font-medium">{formatPrice(product.sellingPrice)}</span>
                 <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
               </button>
             ))}

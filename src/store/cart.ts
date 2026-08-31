@@ -59,7 +59,7 @@ export function useCartTotals() {
   const items = lines
     .map((line) => ({ line, product: getProductById(line.productId) }))
     .filter((x) => x.product);
-  const subtotal = items.reduce((sum, x) => sum + (x.product!.price * x.line.quantity), 0);
+  const subtotal = items.reduce((sum, x) => sum + (x.product!.sellingPrice * x.line.quantity), 0);
   const count = lines.reduce((sum, l) => sum + l.quantity, 0);
   const shipping = subtotal === 0 || subtotal >= 5000 ? 0 : 199;
   return { items, subtotal, count, shipping, total: subtotal + shipping };

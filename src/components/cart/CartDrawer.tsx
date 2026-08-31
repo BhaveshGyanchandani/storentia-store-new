@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import { ShoppingBag } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { useCartStore, useCartTotals } from "@/store/cart";
@@ -27,9 +28,11 @@ export function CartDrawer() {
   return (
     <div className="flex h-full flex-col">
       <div className="flex-1 overflow-y-auto px-6">
-        {items.map(({ line, product }) => (
-          <CartItem key={`${line.productId}-${line.size}-${line.color}`} line={line} product={product!} />
-        ))}
+        <AnimatePresence initial={false}>
+          {items.map(({ line, product }) => (
+            <CartItem key={`${line.productId}-${line.size}-${line.color}`} line={line} product={product!} />
+          ))}
+        </AnimatePresence>
       </div>
       <div className="border-t border-border px-6 py-5 space-y-3">
         <div className="flex justify-between text-sm">

@@ -8,6 +8,7 @@ import { useWishlistStore } from "@/store/wishlist";
 import { useCartStore } from "@/store/cart";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { handleImageError } from "@/lib/images";
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
   const [hovered, setHovered] = useState(false);
@@ -16,7 +17,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
   const addItem = useCartStore((s) => s.addItem);
   const openCart = useCartStore((s) => s.open);
 
-  const secondImage = product.images[1] ?? product.images[0];
+  const secondImage = product.productImages[1] ?? product.productImages[0];
 
   return (
     <motion.div
@@ -31,9 +32,10 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       <Link to={`/product/${product.id}`} className="block">
         <div className="relative aspect-[4/5] overflow-hidden bg-muted rounded-sm">
           <img
-            src={product.images[0]}
-            alt={product.name}
+            src={product.productImages[0]}
+            alt={product.productTitle}
             loading="lazy"
+            onError={handleImageError}
             className={cn(
               "absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-out",
               hovered && "opacity-0 scale-105"
@@ -44,6 +46,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             alt=""
             aria-hidden
             loading="lazy"
+            onError={handleImageError}
             className={cn(
               "absolute inset-0 h-full w-full object-cover scale-105 transition-all duration-700 ease-out opacity-0",
               hovered && "opacity-100 scale-100"
@@ -79,7 +82,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
                 e.preventDefault();
                 addItem(product.id, { size: product.sizes?.[Math.floor(product.sizes.length / 2)], quantity: 1 });
                 openCart();
-                toast.success(`Added ${product.name} to bag`);
+                toast.success(`Added ${product.productTitle} to bag`);
               }}
               className="flex w-full items-center justify-center gap-1.5 bg-ink py-3 text-xs font-medium uppercase tracking-wide text-cream focus-ring rounded-sm hover:bg-ink/85 transition-colors"
             >
@@ -91,11 +94,11 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         <div className="mt-3.5 flex items-start justify-between gap-2">
           <div className="min-w-0">
             <p className="text-[11px] uppercase tracking-wide text-muted-foreground truncate">{product.brand}</p>
-            <h3 className="mt-0.5 text-sm text-ink truncate">{product.name}</h3>
+            <h3 className="mt-0.5 text-sm text-ink truncate">{product.productTitle}</h3>
           </div>
         </div>
         <div className="mt-1.5 flex items-center gap-2">
-          <span className="text-sm font-medium">{formatPrice(product.price)}</span>
+          <span className="text-sm font-medium">{formatPrice(product.sellingPrice)}</span>
           {product.originalPrice && (
             <span className="text-xs text-muted-foreground line-through">{formatPrice(product.originalPrice)}</span>
           )}

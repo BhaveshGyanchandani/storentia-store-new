@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { PRODUCTS } from "@/data/products";
 import { formatPrice } from "@/lib/utils";
+import { handleImageError } from "@/lib/images";
 
 const MOCK_ORDERS = [
   { id: "MSN-482913", date: "Aug 12, 2026", status: "Delivered", items: [PRODUCTS[0], PRODUCTS[2]], total: 27800 },
@@ -76,7 +77,7 @@ export default function Account() {
         <div className="flex items-center justify-between mb-10">
           <div>
             <h1 className="font-display text-3xl">My Account</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Aanya Kapoor · aanya.kapoor@email.com</p>
+            <p className="mt-1 text-sm text-muted-foreground">Bhavesh Gyanchandani · bhaveshgyanchandanip1@gmail.com</p>
           </div>
           <Button variant="ghost" size="sm" onClick={() => setAuthed(false)}>
             <LogOut className="h-3.5 w-3.5" /> Sign Out
@@ -118,7 +119,7 @@ export default function Account() {
                   </div>
                   <div className="mt-4 flex items-center gap-2">
                     {order.items.map((p) => (
-                      <img key={p.id} src={p.images[0]} alt={p.name} className="h-14 w-12 rounded-xs object-cover" />
+                      <img key={p.id} src={p.productImages[0]} alt={p.productTitle} onError={handleImageError} className="h-14 w-12 rounded-xs object-cover" />
                     ))}
                   </div>
                   <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
@@ -134,11 +135,11 @@ export default function Account() {
             <div className="max-w-md space-y-4">
               <div>
                 <Label>Full Name</Label>
-                <Input defaultValue="Aanya Kapoor" />
+                <Input defaultValue="Bhavesh Gyanchandani" />
               </div>
               <div>
                 <Label>Email</Label>
-                <Input defaultValue="aanya.kapoor@email.com" />
+                <Input defaultValue="bhaveshgyanchandanip1@gmail.com" />
               </div>
               <div>
                 <Label>Phone</Label>

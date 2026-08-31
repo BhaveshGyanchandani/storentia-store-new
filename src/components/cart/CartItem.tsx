@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { Minus, Plus, X } from "lucide-react";
 import type { Product, CartLine } from "@/types";
 import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/store/cart";
 import { useWishlistStore } from "@/store/wishlist";
+import { handleImageError } from "@/lib/images";
 
 export function CartItem({ line, product }: { line: CartLine; product: Product }) {
   const setQuantity = useCartStore((s) => s.setQuantity);
@@ -11,16 +13,23 @@ export function CartItem({ line, product }: { line: CartLine; product: Product }
   const toggleWish = useWishlistStore((s) => s.toggle);
 
   return (
-    <div className="flex gap-4 py-5 hairline first:border-t-0">
+    <motion.div
+      layout
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: "auto" }}
+      exit={{ opacity: 0, height: 0 }}
+      transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+      className="flex gap-4 py-5 hairline first:border-t-0 overflow-hidden"
+    >
       <Link to={`/product/${product.id}`} className="h-24 w-20 shrink-0 overflow-hidden rounded-sm bg-muted">
-        <img src={product.images[0]} alt={product.name} className="h-full w-full object-cover" />
+        <img src={product.productImages[0]} alt={product.productTitle} onError={handleImageError} className="h-full w-full object-cover" />
       </Link>
       <div className="flex flex-1 flex-col justify-between min-w-0">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <p className="text-[11px] uppercase text-muted-foreground">{product.brand}</p>
             <Link to={`/product/${product.id}`} className="text-sm font-medium hover:underline truncate block">
-              {product.name}
+              {product.productTitle}
             </Link>
             <p className="mt-0.5 text-xs text-muted-foreground">
               {[line.color, line.size].filter(Boolean).join(" · ")}
@@ -53,7 +62,7 @@ export function CartItem({ line, product }: { line: CartLine; product: Product }
             </button>
           </div>
           <div className="text-right">
-            <p className="text-sm font-medium">{formatPrice(product.price * line.quantity)}</p>
+            <p className="text-sm font-medium">{formatPrice(product.sellingPrice * line.quantity)}</p>
             <button
               className="text-[11px] text-muted-foreground hover:text-ink underline-offset-2 hover:underline"
               onClick={() => {
@@ -66,6 +75,6 @@ export function CartItem({ line, product }: { line: CartLine; product: Product }
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
